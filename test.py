@@ -28,13 +28,13 @@ api_version = "v3"
 youtube = build(
     api_service_name, api_version, developerKey=api_key)
 
-request = youtube.videos().list(
-        part="snippet,contentDetails,statistics",
-        id="Ks-_Mh1QhMc"
-    )
-response = request.execute()
+# request = youtube.videos().list(
+#         part="snippet,contentDetails,statistics",
+#         id="Ks-_Mh1QhMc"
+#     )
+# response = request.execute()
 
-print(response)
+# print(response)
 
 def get_channel_stats(youtube, channel_ids):
     
