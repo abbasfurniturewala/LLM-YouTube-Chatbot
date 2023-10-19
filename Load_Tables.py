@@ -31,7 +31,9 @@ cur.execute("CREATE OR REPLACE TABLE YOUTUBE_LLM.PUBLIC.VIDEOS ( \
     channelTitle STRING,\
     title STRING,\
     description STRING,\
+    tags VARIANT, \
     publishedAt TIMESTAMP_NTZ,\
+    defaultAudioLanguage STRING, \
     viewCount FLOAT,\
     likeCount FLOAT,\
     favouriteCount FLOAT,\
@@ -44,7 +46,7 @@ cur.execute("CREATE OR REPLACE TABLE YOUTUBE_LLM.PUBLIC.VIDEOS ( \
     tagsCount INTEGER,\
     likeRatio FLOAT,\
     commentRatio FLOAT,\
-    titleLength INTEGER)" ) 
+    titleLength INTEGER)" )
 
 # LOAD TABLE VIDEOS
  
