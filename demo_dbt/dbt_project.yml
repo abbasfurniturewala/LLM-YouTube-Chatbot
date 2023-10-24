@@ -35,3 +35,13 @@ models:
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view
+  Youtube_LLM_Video:
+    # Config indicated by + and applies to all files under models/example/
+    example:
+      +materialized: table
+    columns:
+    - name: VIDEO_ID
+      description: "The primary key for this table"
+      tests:
+        - unique
+        - not_null

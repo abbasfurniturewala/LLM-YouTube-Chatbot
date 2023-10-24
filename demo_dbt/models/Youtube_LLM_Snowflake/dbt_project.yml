@@ -1,0 +1,9 @@
+version: 2
+
+models:
+  - name: YOUTUBE_LLM_VIDEOS
+    columns:
+      - name: 'VIDEO_ID'
+        description: "Unique ID for each video"
+    tests:
+      - not_null
