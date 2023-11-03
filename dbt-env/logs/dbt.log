@@ -1,0 +1,28 @@
+[0m22:29:08.337931 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022322E39970>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022326E51190>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022326E518E0>]}
+
+
+============================== 22:29:08.343283 | d53af592-40b1-401e-917d-3417d778f761 ==============================
+[0m22:29:08.343283 [info ] [MainThread]: Running with dbt=1.6.6
+[0m22:29:08.343283 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': 'C:\\Users\\furni\\.dbt', 'debug': 'False', 'version_check': 'True', 'log_path': 'logs', 'warn_error': 'None', 'fail_fast': 'False', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'introspect': 'True', 'invocation_command': 'dbt compile', 'static_parser': 'True', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'send_anonymous_usage_stats': 'True'}
+[0m22:29:08.344517 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\furni\LLM-YouTube-Chatbot\dbt-env\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m22:29:08.345522 [debug] [MainThread]: Command `dbt compile` failed at 22:29:08.344517 after 0.05 seconds
+[0m22:29:08.345522 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022322E39970>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022326E8AAF0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000022326E8AB80>]}
+[0m22:29:08.345522 [debug] [MainThread]: Flushing usage events
+[0m22:29:34.681033 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016DC7B5ACA0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016DCBB72280>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016DCBB726A0>]}
+
+
+============================== 22:29:34.685042 | 31b230f5-5ae1-4594-ae3d-6b3f943ede6e ==============================
+[0m22:29:34.685042 [info ] [MainThread]: Running with dbt=1.6.6
+[0m22:29:34.685042 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'log_cache_events': 'False', 'write_json': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': 'C:\\Users\\furni\\.dbt', 'version_check': 'True', 'fail_fast': 'False', 'log_path': 'logs', 'debug': 'False', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'invocation_command': 'dbt test', 'static_parser': 'True', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'target_path': 'None', 'introspect': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m22:29:34.686033 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path C:\Users\furni\LLM-YouTube-Chatbot\dbt-env\dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m22:29:34.686848 [debug] [MainThread]: Command `dbt test` failed at 22:29:34.686848 after 0.03 seconds
+[0m22:29:34.687935 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016DC7B5ACA0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016DCBBABAC0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000016DCBBABB50>]}
+[0m22:29:34.687935 [debug] [MainThread]: Flushing usage events

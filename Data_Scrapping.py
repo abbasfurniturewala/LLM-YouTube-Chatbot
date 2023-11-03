@@ -349,10 +349,12 @@ playlist_df = get_playlists_info(youtube, channel_ids)
 
 channel_df = get_channel_stats(youtube, channel_ids)
 
+comments_all_data_df.reset_index(drop=True, inplace=True)
 
-snowflake_user = 'FURNITUREWALAABBAS'
+
+snowflake_user = 'ABBASFURNITUREWALA'
 snowflake_password = 'Abba$123'
-snowflake_account = 'jrnvcvi-sw72415'
+snowflake_account = 'lqeuurc-npb19527'
 snowflake_database = 'YOUTUBE_LLM'
 snowflake_schema = 'RAW'
 #snowflake_warehouse = 'your_warehouse'

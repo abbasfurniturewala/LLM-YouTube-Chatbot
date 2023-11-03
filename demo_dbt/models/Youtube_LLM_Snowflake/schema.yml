@@ -7,13 +7,28 @@ sources:
     schema: RAW
     tables:
       - name: videos
+        columns:
+          - name: VIDEO_ID
+            description: "The primary key for this table"
+            tests:
+              - unique
+              - not_null
       - name: channels  # Add another table
       - name: comments  # Add another table
       - name: comments_combined # Add another table
       - name: playlist  # Add another table
       
 
-    
+models:
+  - name: Youtube_LLM_COMMENTS
+    description: "A starter dbt model"
+    columns:
+      - name: COMMENTS
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null    
+
 
 
 

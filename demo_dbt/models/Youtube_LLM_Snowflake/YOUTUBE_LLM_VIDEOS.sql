@@ -1,5 +1,5 @@
 
-{{ config(materialized='table') }}
+{{ config(materialized='table', test ='notnull') }}
 
 with source_videos as (
     select * from {{ source('Youtube_LLM_Data', 'videos') }}
