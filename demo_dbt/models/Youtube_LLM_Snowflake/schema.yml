@@ -1,0 +1,39 @@
+version: 2
+
+sources:
+  - name: Youtube_LLM_Data
+    description: "Raw tables from Youtube_LLM"
+    database: Youtube_LLM
+    schema: RAW
+    tables:
+      - name: videos
+        columns:
+          - name: VIDEO_ID
+            description: "The primary key for this table"
+            tests:
+              - unique
+              - not_null
+      - name: channels  # Add another table
+      - name: comments  # Add another table
+      - name: comments_combined # Add another table
+      - name: playlist  # Add another table
+      
+
+models:
+  - name: Youtube_LLM_COMMENTS
+    description: "A starter dbt model"
+    columns:
+      - name: COMMENTS
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null    
+
+
+
+
+
+
+    
+
+  
