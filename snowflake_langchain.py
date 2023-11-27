@@ -3,7 +3,7 @@ import langchain.chains
 import streamlit as st
 
 from langchain.chains import LLMChain
-from langchain.llms import OpenAI  
+from langchain.chat_models import ChatOpenAI  
 from langchain.utilities import SQLDatabase 
 from langchain.chains import create_sql_query_chain
 from snowflake.snowpark import Session
@@ -56,7 +56,7 @@ class SnowflakeComponent:
 # Initialize your components
 #snowflake_component = SnowflakeComponent(conn)
 
-gpt = OpenAI(temperature=0, openai_api_key=st.secrets.OPENAI_API_KEY)  # Replace with your preferred LLM if different
+gpt = ChatOpenAI(temperature=0, openai_api_key=st.secrets.OPENAI_API_KEY, model_name= 'gpt-4-1106-preview')  # Replace with your preferred LLM if different
 
 
 snowflake_url = f"snowflake://{user}:{password}@{account}/{database}/{schema}?warehouse={warehouse}&role={role}"
@@ -73,7 +73,7 @@ db = SQLDatabase.from_uri(snowflake_url,sample_rows_in_table_info=1)
 database_chain = create_sql_query_chain(gpt,db)
 
 
-prompt = "which channel posts the most videos? "
+prompt = "give best 3 performing video(taking overall views, likes into consideration views*likes) per day for the entirety of the month"
 
 sql_query = database_chain.invoke({"question": prompt})
 
