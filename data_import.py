@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 from dateutil import parser
 import isodate
-import time
 from datetime import datetime, timedelta
 from googleapiclient.errors import HttpError 
 
@@ -33,8 +32,7 @@ channel_ids = [
      'UCBi2mrWuNuyYy4gbM6fU18Q',  # ABC NEWS
      'UC8p1vwvWtl6T73JiExfWs1g',  # CBS NEWS
 ]
-api_key = 'AIzaSyA4Sd1FkOSah19dL7cg7OuBUj9VBJiE2fE' 
-
+api_key = 'AIzaSyDux3Qn4l6wcGMsj729rPiz_wkUv9ZeEi8' 
 youtube = build('youtube', 'v3', developerKey=api_key)
 
 def get_channel_stats(youtube, channel_ids):
@@ -79,9 +77,13 @@ def get_video_ids(youtube, playlist_id):
     
     """
     year = 2023
-    month = 3
+    month = 12
     start_of_month = datetime(year, month, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
-    end_of_month = datetime(year, month + 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+    if month == 12:
+        end_of_month = datetime(year + 1, 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+    else:
+        end_of_month = datetime(year, month + 1, 1).strftime('%Y-%m-%dT%H:%M:%SZ')
+
 
     #one_month_ago = (datetime.now() - timedelta(days=30)).strftime('%Y-%m-%dT%H:%M:%SZ')
     
@@ -139,7 +141,7 @@ def get_video_ids(youtube, playlist_id):
 
 
 
-def get_video_details(youtube, video_ids, channel_id, playlist_id):
+def get_video_details(youtube, video_ids, channel_id):
     """
     Get video statistics of all videos with given IDs
     Params:
@@ -172,7 +174,6 @@ def get_video_details(youtube, video_ids, channel_id, playlist_id):
             video_info = {}
             video_info['channel_id'] = channel_id  # Add channel_id to the DataFrame
             video_info['video_id'] = video['id']
-            video_info['playlist_id'] = playlist_id
 
             for k in stats_to_keep.keys():
                 for v in stats_to_keep[k]:
@@ -272,7 +273,7 @@ def get_comments(youtube, video_ids):
             
             comments_in_video= []
             comments_in_video_info = {}
-            for comment in response['items'][:50]:
+            for comment in response['items'][:150]:
                 comment_text = comment['snippet']['topLevelComment']['snippet']['textOriginal']
         
                 # Append the comment text to the list
@@ -319,12 +320,12 @@ def get_comments(youtube, video_ids):
     return pd.DataFrame(all_comments_data) , pd.DataFrame(all_comments)   
 
 
-def fetch_data(api_key, video_ids, channel_id, playlist_id):
+def fetch_data(api_key, video_ids, channel_id):
     youtube = build('youtube', 'v3', developerKey=api_key)
     
 
     # Get video data for the current chunk of video IDs
-    video_data = get_video_details(youtube, video_ids, channel_id, playlist_id)
+    video_data = get_video_details(youtube, video_ids, channel_id)
 
     # Get comment data for the current chunk of video IDs
     comments_data_df, comments_combined_df = get_comments(youtube, video_ids)
@@ -332,61 +333,25 @@ def fetch_data(api_key, video_ids, channel_id, playlist_id):
     return video_data, comments_data_df, comments_combined_df
 
 
-#api_keys = ['AIzaSyDux3Qn4l6wcGMsj729rPiz_wkUv9ZeEi8', 'AIzaSyB-4NIQtecQPbRX7TWKphThkb9_Brh2wL4']
-api_keys = ['AIzaSyDDfDGWcB-eHKLkr_DVtA5U6xzmWw5B2LU', 'AIzaSyA4Sd1FkOSah19dL7cg7OuBUj9VBJiE2fE']
 
-# channel_df = get_channel_stats(youtube, channel_ids)
-# # Initialize dataframes
-# videos_df = pd.DataFrame()
-# comments_df = pd.DataFrame()
-# comments_all_data_df = pd.DataFrame()
+#api_keys = ['AIzaSyB-4NIQtecQPbRX7TWKphThkb9_Brh2wL4', 'AIzaSyA4Sd1FkOSah19dL7cg7OuBUj9VBJiE2fE']
+api_keys = ['AIzaSyDux3Qn4l6wcGMsj729rPiz_wkUv9ZeEi8', 'AIzaSyDDfDGWcB-eHKLkr_DVtA5U6xzmWw5B2LU']
+#api_keys = ['AIzaSyDDfDGWcB-eHKLkr_DVtA5U6xzmWw5B2LU', 'AIzaSyA4Sd1FkOSah19dL7cg7OuBUj9VBJiE2fE']
 
-# for c in channel_df['channelName'].unique():
-#     print("Getting video information from channel: " + c)
-#     playlist_id = channel_df.loc[channel_df['channelName']== c, 'playlistId'].iloc[0]
-#     channel_id = channel_df.loc[channel_df['channelName']== c, 'channel_id'].iloc[0]  # Get the channel_id
-#     video_ids = get_video_ids(youtube, playlist_id)
-# # Split the video_ids list into two parts
-#     split_point = len(video_ids) // 2
-#     video_ids_parts = [video_ids[:split_point], video_ids[split_point:]]
-
-    
-
-# # Define a function to fetch data for a given API key and video IDs
-
-
-# # Loop through API keys and video ID parts
-#     for api_key, video_ids_part in zip(api_keys, video_ids_parts):
-#         video_data_part, comments_data_part, comments_combined_part = fetch_data(api_key, video_ids_part, channel_id)
-
-#         # Append data for the current part to the respective dataframes
-#         videos_df = pd.concat([videos_df, video_data_part], ignore_index=True)
-#         comments_df = pd.concat([comments_df, comments_combined_part], ignore_index=True)
-#         comments_all_data_df = pd.concat([comments_all_data_df, comments_data_part])
-
-all_video_ids = []
-comments_all_data_df = pd.DataFrame()
-playlist_df = pd.DataFrame()
 channel_df = get_channel_stats(youtube, channel_ids)
 # Initialize dataframes
-video_df = pd.DataFrame()
+videos_df = pd.DataFrame()
 comments_df = pd.DataFrame()
 comments_all_data_df = pd.DataFrame()
 
 for c in channel_df['channelName'].unique():
     print("Getting video information from channel: " + c)
-    #playlist_id = channel_df.loc[channel_df['channelName']== c, 'playlistId'].iloc[0]
+    playlist_id = channel_df.loc[channel_df['channelName']== c, 'playlistId'].iloc[0]
     channel_id = channel_df.loc[channel_df['channelName']== c, 'channel_id'].iloc[0]  # Get the channel_id
-    playlist_df = get_playlists_info(youtube, channel_ids)
-    playlist_ids = playlist_df['playlist_id'].tolist()
-    for playlist_id in playlist_ids:
-        #print(playlist_id)
-        video_ids = get_video_ids(youtube, playlist_id)
-        all_video_ids.extend(video_ids)
-    
-    # Split the video_ids list into two parts
-        split_point = len(video_ids) // 2
-        video_ids_parts = [video_ids[:split_point], video_ids[split_point:]]
+    video_ids = get_video_ids(youtube, playlist_id)
+# Split the video_ids list into two parts
+    split_point = len(video_ids) // 2
+    video_ids_parts = [video_ids[:split_point], video_ids[split_point:]]
 
     
 
@@ -394,48 +359,13 @@ for c in channel_df['channelName'].unique():
 
 
 # Loop through API keys and video ID parts
-        for api_key, video_ids_part in zip(api_keys, video_ids_parts):
-            if not video_ids_part:
-                continue
+    for api_key, video_ids_part in zip(api_keys, video_ids_parts):
+        video_data_part, comments_data_part, comments_combined_part = fetch_data(api_key, video_ids_part, channel_id)
 
-            MAX_RETRIES = 3  # Maximum number of retries
-            RETRY_DELAY = 5  # Delay between retries in seconds
-
-            retries = 0
-            while retries < MAX_RETRIES:
-                try:
-                    video_data_part, comments_data_part, comments_combined_part = fetch_data(api_key, video_ids_part, channel_id, playlist_id)
-                    video_df = pd.concat([video_df, video_data_part], ignore_index=True)
-                    break  # If the fetch is successful, break out of the retry loop
-
-                except HttpError as e:
-                    if e.resp.status in [500, 503]:  # Server errors
-                        print("Server error encountered: {}. Retrying in {} seconds...".format(e, RETRY_DELAY))
-                        time.sleep(RETRY_DELAY)  # Wait for a bit before retrying
-                        retries += 1
-                    else:
-                        # Handle other HTTP errors (e.g., client errors like 400 Bad Request)
-                        print("Failed to fetch data: {}".format(e))
-                        break  # Break out of the loop for non-retryable errors
-
-                except Exception as e:
-                    print("An unexpected error occurred: {}".format(e))
-                    break  # Break out of the loop for non-retryable errors
-
-                if retries == MAX_RETRIES:
-                    print("Maximum retries reached. Moving to the next part.")
-                    break  # Break out of the loop if max retries have been reached
-
-
-
-            # video_data_part, comments_data_part, comments_combined_part = fetch_data(api_key, video_ids_part, channel_id, playlist_id)
-
-            # Append data for the current part to the respective dataframes
-            video_df = pd.concat([video_df, video_data_part], ignore_index=True)
-            comments_df = pd.concat([comments_df, comments_combined_part], ignore_index=True)
-            comments_all_data_df = pd.concat([comments_all_data_df, comments_data_part])
-
-
+        # Append data for the current part to the respective dataframes
+        videos_df = pd.concat([videos_df, video_data_part], ignore_index=True)
+        comments_df = pd.concat([comments_df, comments_combined_part], ignore_index=True)
+        comments_all_data_df = pd.concat([comments_all_data_df, comments_data_part])
 
 playlist_df = get_playlists_info(youtube, channel_ids)
 
@@ -464,10 +394,9 @@ conn = snowflake.connector.connect(
 # Create a cursor object
 cur = conn.cursor()
 
-cur.execute("CREATE OR REPLACE TABLE YOUTUBE_LLM.RAW.VIDEOS ( \
+cur.execute("CREATE TABLE IF NOT EXISTS YOUTUBE_LLM.RAW.VIDEOS ( \
     channel_id STRING, \
     video_id STRING,\
-    playlist_id_id STRING,\
     channelTitle STRING,\
     title STRING,\
     description STRING,\
@@ -490,11 +419,11 @@ cur.execute("CREATE OR REPLACE TABLE YOUTUBE_LLM.RAW.VIDEOS ( \
 
 # LOAD TABLE VIDEOS
  
-write_pandas(conn, video_df, 'VIDEOS', quote_identifiers= False)
+write_pandas(conn, videos_df, 'VIDEOS', quote_identifiers= False)
 
 # CREATING TABLE COMMENTS
 
-cur.execute("CREATE OR REPLACE TABLE YOUTUBE_LLM.RAW.COMMENTS ( \
+cur.execute("CREATE  TABLE IF NOT EXISTS YOUTUBE_LLM.RAW.COMMENTS ( \
     VIDEO_ID VARCHAR(1000000) ,  \
     COMMENTS VARCHAR(16777216),  \
     LIKECOUNT NUMBER(38, 0), \
@@ -512,7 +441,7 @@ write_pandas(conn, comments_all_data_df, 'COMMENTS', quote_identifiers= False)
 
 # CREATING TABLE COMMENTS_COMBINED
 
-cur.execute("create or replace TABLE YOUTUBE_LLM.RAW.COMMENTS_COMBINED ( \
+cur.execute("create TABLE IF NOT EXISTS YOUTUBE_LLM.RAW.COMMENTS_COMBINED ( \
 	VIDEO_ID VARCHAR(10000000),\
 	COMMENTS VARIANT);")
 
@@ -521,7 +450,7 @@ write_pandas(conn, comments_df, 'COMMENTS_COMBINED', quote_identifiers= False)
 
 # CREATING TABLE CHANNELS
 
-cur.execute("create or replace TABLE YOUTUBE_LLM.RAW.CHANNELS ( \
+cur.execute("create  TABLE IF NOT EXISTS YOUTUBE_LLM.RAW.CHANNELS ( \
 	CHANNELNAME VARCHAR(16777216),\
 	CHANNEL_ID VARCHAR(16777216),\
 	SUBSCRIBERS NUMBER(38,0),\
@@ -534,7 +463,7 @@ write_pandas(conn, channel_df, 'CHANNELS', quote_identifiers= False)
 
 # CREATING TABLE PLAYLIST
 
-cur.execute("create or replace TABLE YOUTUBE_LLM.RAW.PLAYLIST (\
+cur.execute("create TABLE IF NOT EXISTS YOUTUBE_LLM.RAW.PLAYLIST (\
 	PLAYLIST_ID VARCHAR(10000000),\
 	TITLE VARCHAR(10000000),\
 	DESCRIPTION VARCHAR(10000000),\

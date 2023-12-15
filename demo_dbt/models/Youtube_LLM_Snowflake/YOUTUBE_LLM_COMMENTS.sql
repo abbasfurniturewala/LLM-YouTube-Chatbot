@@ -7,7 +7,7 @@ with source_comments as (
 
 final as ( 
     SELECT 
-    VIDEO_ID,
+   VIDEO_ID,
 COMMENTS,
 LIKECOUNT,
 AUTHORDISPLAYNAME,
