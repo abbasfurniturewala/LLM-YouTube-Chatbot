@@ -14,21 +14,30 @@ from langchain.prompts import (
     SystemMessagePromptTemplate,
 )
 
+# Set the title
 
 st.title("📺YOUTUBE BOT")
 
-# Initialize the chat messages history
+
+# Setting the title of the Streamlit app
+
 openai.api_key = st.secrets.OPENAI_API_KEY
+
+
+# Initialize the chat messages history
+
 if "messages" not in st.session_state:
     # system prompt includes table information, rules, and prompts the LLM to produce
     # a welcome message to the user.
     st.session_state.messages = [{"role": "system", "content": get_system_prompt()}]
 
 # Prompt for user input and save
+    
 if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
 
 # display the existing chat messages
+    
 for message in st.session_state.messages:
     if message["role"] == "system":
         continue
@@ -37,28 +46,8 @@ for message in st.session_state.messages:
         if "results" in message:
             st.dataframe(message["results"])
 
-#If last message is not from assistant, we need to generate a new response
-# if st.session_state.messages[-1]["role"] != "assistant":
-#     with st.chat_message("assistant"):
-#         response = ""
-#         resp_container = st.empty()
-#         for delta in openai.ChatCompletion.create(
-#             model="gpt-4-1106-preview",
-#             messages=[{"role": m["role"], "content": m["content"]} for m in st.session_state.messages],
-#             stream=True,
-#         ):
-#             response += delta.choices[0].delta.get("content", "")
-#             resp_container.markdown(response)
 
-#         message = {"role": "assistant", "content": response}
-#         # Parse the response for a SQL query and execute if available
-#         sql_match = re.search(r"```sql\n(.*)\n```", response, re.DOTALL)
-#         if sql_match:
-#             sql = sql_match.group(1)
-#             conn = st.experimental_connection("snowpark")
-#             message["results"] = conn.query(sql)
-#             st.dataframe(message["results"])
-#         st.session_state.messages.append(message)
+# Process assistant's response if the last message is not from the assistant
 
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
@@ -104,14 +93,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
             # Append the SQL results message to the conversation history
             st.session_state.messages.append(sql_results_message)
 
-            # Update the memory with the new message (if your memory implementation supports this)
+            # Update the memory with the new message 
             
         
         st.session_state.messages.append(message)
-        # prepared_messages = []
-        # for m in st.session_state.messages:
-        #     content_str = str(m["content"]) if m["content"] is not None else ""
-        #     prepared_messages.append({"role": m["role"], "content": content_str})
-
-        # response = llm_chain.run(prepared_messages)
-        # #response = llm_chain.run([{"role": m["role"], "content": m["content"]} for m in st.session_state.messages])

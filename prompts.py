@@ -1,28 +1,8 @@
+ # Importing the streamlit library for building web apps
 import streamlit as st
-# from transformers import pipeline
-# from sklearn.feature_extraction.text import CountVectorizer
-# from sklearn.metrics.pairwise import cosine_similarity
 
-#QUALIFIED_TABLE_NAME = "FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ANNUAL_TIME_SERIES"
 
-#QUALIFIED_TABLE_NAME = "YOUTUBE_LLM.STAGING.YOUTUBE_LLM_VIDEOS"
-
-#TABLE_DESCRIPTION = """
-#This table has various metrics for Youtube channels (main stream media News channels) for the past month .
-#The user may describe the entities interchangeably as video views, performance, most watched.
-#"""
-
-# TABLE_DESCRIPTION = """
-# This table has various metrics for financial entities (also referred to as banks) since 1983.
-# The user may describe the entities interchangeably as banks, financial institutions, or financial entities.
-# """
-# This query is optional if running Frosty on your own table, especially a wide table.
-# Since this is a deep table, it's useful to tell Frosty what variables are available.
-# Similarly, if you have a table with semi-structured data (like JSON), it could be used to provide hints on available keys.
-# If altering, you may also need to modify the formatting logic in get_table_context() below.
-
-#METADATA_QUERY = "SELECT VARIABLE_NAME, DEFINITION FROM FROSTY_SAMPLE.CYBERSYN_FINANCIAL.FINANCIAL_ENTITY_ATTRIBUTES_LIMITED;"
-#METADATA_QUERY = ""
+# SQL template string for generating SQL queries and text analytics as a part of the YOUTUBE BOT functionality
 
 GEN_SQL = """
 You will be acting as an AI Snowflake SQL Expert and also as a sentiment analyzer named YOUTUBE BOT.
@@ -105,40 +85,7 @@ Trend 3: Negative sentiment about a disappointing product.
 
 """
 
-# @st.cache_data(show_spinner=False)
-# def get_table_context(table_name: str, table_description: str, metadata_query: str = None):
-#     table = table_name.split(".")
-#     conn = st.experimental_connection("snowpark")
-#     columns = conn.query(f"""
-#         SELECT COLUMN_NAME, DATA_TYPE FROM {table[0].upper()}.INFORMATION_SCHEMA.COLUMNS
-#         WHERE TABLE_SCHEMA = '{table[1].upper()}' AND TABLE_NAME = '{table[2].upper()}'
-#         """,
-#     )
-#     columns = "\n".join(
-#         [
-#             f"- **{columns['COLUMN_NAME'][i]}**: {columns['DATA_TYPE'][i]}"
-#             for i in range(len(columns["COLUMN_NAME"]))
-#         ]
-#     )
-#     context = f"""
-# Here is the table name <tableName> {'.'.join(table)} </tableName>
-
-# <tableDescription>{table_description}</tableDescription>
-
-# Here are the columns of the {'.'.join(table)}
-
-# <columns>\n\n{columns}\n\n</columns>
-#     """
-#     if metadata_query:
-#         metadata = conn.query(metadata_query)
-#         metadata = "\n".join(
-#             [
-#                 f"- **{metadata['VARIABLE_NAME'][i]}**: {metadata['DEFINITION'][i]}"
-#                 for i in range(len(metadata["VARIABLE_NAME"]))
-#             ]
-#         )
-#         context = context + f"\n\nAvailable variables by VARIABLE_NAME:\n\n{metadata}"
-#     return context
+# Function to get context for single tables in a schema
 
 def get_single_table_context(conn, schema_name, database_name, table_name, table_description):
     columns = conn.query(f"""
@@ -161,6 +108,8 @@ Here are the columns of {database_name}.{schema_name}.{table_name}
     return context
 
 # Function to get context for all tables
+
+
 @st.cache_data(show_spinner=False)
 def get_all_tables_context(schema_name: str, database_name: str):
     conn = st.experimental_connection("snowpark")
@@ -175,76 +124,21 @@ def get_all_tables_context(schema_name: str, database_name: str):
         table_description = "Description for " + table_name
         table_context = get_single_table_context(conn, schema_name, database_name, table_name, table_description)
         all_contexts.append(table_context)
-
     return "\n\n".join(all_contexts)
 
+
+
+# Function to construct the system prompt by incorporating contexts of all tables
 
 def get_system_prompt():
     all_tables_context = get_all_tables_context(schema_name="STAGING", database_name="YOUTUBE_LLM")
     return GEN_SQL.format(context=all_tables_context)
 
 
-# def distilledbert_test(question, inputdata):
-#     # Initialize the question-answering pipeline
-#     question_answerer = pipeline("question-answering", model="distilbert-base-uncased-distilled-squad")
 
-#     # Specify your question
-#     #question = "Identify the spam content in the list"
-#     # Use the question-answering pipeline to find the answer
-#     result = question_answerer(question=question, context=inputdata)
+# Main entry point for the Streamlit app
 
-#     ans=result['answer']
-#     res=[]
-#     res.append({"Answer":ans})
-#     #print(f"Answer: '{result['answer']}', score: {round(result['score'], 4)}, start: {result['start']}, end: {result['end']}") 
-#     return res
-
-# def checkSimilarity(inputques):
-#     questions=["what is the video about based on the comments?", "list the most discussed topics regarding video.", 
-#                "brief about content of the comments","why did the users respond the way they did in this?",
-#                 "what is the sentiment of the video","trending topics in the comments", "what is the spam content in the comments for video",
-#                 "what's most discussed about in this video comments?"]
-#     matched = False
-#     for question in questions:
-#         vectorizer = CountVectorizer().fit_transform([inputques, question])
-#         vectors = vectorizer.toarray()
-
-#         # Calculate cosine similarity
-#         cosine_sim = cosine_similarity(vectors)
-#         if cosine_sim[0][1] >= 0.7:
-#             matched = True
-#             break
-#     return matched
-
-# def get_system_prompt():
-#     table_context = get_table_context(
-#         table_name=QUALIFIED_TABLE_NAME,
-#         table_description=TABLE_DESCRIPTION,
-#         metadata_query=METADATA_QUERY
-#     )
-#     return GEN_SQL.format(context=table_context)
-
-# do `streamlit run prompts.py` to view the initial system prompt in a Streamlit app
 if __name__ == "__main__":
     st.header("System prompt for YOUTUBE BOT")
     st.markdown(get_system_prompt())
-    """
-    user_question = st.text_input("Ask a question:")
     
-    questions_list=["What is the video about based on the comments?", "List the most discussed topics.", 
-                    "trending topics in the comments", "what is the spam content in the comments",
-                    "What's most discussed about in this?"]
-    if user_question:
-        analysis_ques=checkSimilarity(user_question.lower(), questions_list)
-        # Check if the question is related to sentiment analysis
-        if analysis_ques:
-            # Assume 'inputdata' is the relevant context for DistilledBERT
-            distilledbert_result = distilledbert_test(user_question, inputdata)
-            st.write(f"{user_question} : {distilledbert_result}")
-        else:
-            # Your existing logic to handle other types of questions
-            # ...
-            st.write("Oops, I haven't trained to answer these questions yet")
-        # Generate and display the SQL query based on the user's question
-        # ...
-    """
